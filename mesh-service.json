@@ -1,0 +1,7 @@
+{
+  "$schema": "https://baditaflorin.github.io/mesh-common/mesh-service.schema.json",
+  "id": "mesh-volunteer-desk",
+  "category": "Community",
+  "subcategory": "Events & volunteering",
+  "useCases": ["events", "volunteers", "check-in"]
+}
