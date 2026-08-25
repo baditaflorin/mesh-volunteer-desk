@@ -1,94 +1,80 @@
-# **APP_NAME**
+# Volunteer Desk
 
-[![pages](https://img.shields.io/badge/live-baditaflorin.github.io%2F__APP_NAME__-__ACCENT_NOHASH__)](https://baditaflorin.github.io/__APP_NAME__/)
-[![version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/baditaflorin/__APP_NAME__/blob/main/package.json)
+[![live](https://img.shields.io/badge/live-baditaflorin.github.io%2Fmesh--volunteer--desk-d9b354)](https://baditaflorin.github.io/mesh-volunteer-desk/)
+[![version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/baditaflorin/mesh-volunteer-desk/blob/main/package.json)
 [![license](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
-> **DESCRIPTION**
+> A browser-local desk for small field crews to reserve coverage, post concrete needs, and move assignments forward together.
 
-**Live → https://baditaflorin.github.io/__APP_NAME__/**
+**Live:** https://baditaflorin.github.io/mesh-volunteer-desk/
 
-**Source → https://github.com/baditaflorin/__APP_NAME__**
+**Source:** https://github.com/baditaflorin/mesh-volunteer-desk
 
-**Tip the dev (buy a coffee) → https://www.paypal.com/paypalme/florinbadita**
+![Volunteer Desk](docs/screenshot.png)
 
----
+## How the desk works
 
-![screenshot](docs/screenshot.png)
+1. Enter a working name and reserve one of three active desk seats.
+2. Post a specific assignment for the room, whether or not you hold a seat yet.
+3. An admitted volunteer claims the oldest available assignment.
+4. The owner completes it or returns it to the shared queue. Claims expire, so disconnected peers cannot strand work.
 
-> Two peers, side-by-side, in the same room. Drop a `tests/demo/scenario.mjs`
-> exporting `default async (a, b) => …` and run `npm run demo` to regenerate
-> `docs/preview.png` plus `docs/demo-a.webm` / `docs/demo-b.webm` clips.
+Everything synchronizes directly between browsers in the same room with Yjs and WebRTC. There is no app database, account, or central coordinator.
 
-![preview](docs/preview.png)
+The desk uses a 15-minute seat lease and a 20-minute assignment lease. Use the **Renew desk seat** control during longer sessions.
 
-## What it is
-
-A **rootless-computing** peer-to-peer browser app. No backend of its own beyond the self-hosted WebRTC stack listed below. State lives in a Yjs mesh shared by everyone in the same room.
-
-Read the principles → **https://baditaflorin.github.io/rootless-computing/principles.html**
+![Two peers coordinating a field assignment](docs/preview.png)
 
 ## Quickstart
 
-Open the live URL on two devices in the same room (set in ⚙ settings, or scan the room QR). Everything else is in-app.
+Open the live URL on each device, then use **Invite** in the app bar to share the room. The room ID is the boundary for shared data, so share it deliberately.
 
-For local hacking:
+For local development, clone `mesh-common` beside this repository:
 
 ```bash
 git clone https://github.com/baditaflorin/mesh-common
-git clone https://github.com/baditaflorin/__APP_NAME__
-cd __APP_NAME__
-npm install
+git clone https://github.com/baditaflorin/mesh-volunteer-desk
+cd mesh-volunteer-desk
+npm ci
 npm run dev
 ```
 
-`mesh-common` must sit as a **sibling** directory because `package.json` references it via `file:../mesh-common`.
+`mesh-common` must be a sibling directory because the app uses `file:../mesh-common` during development.
+
+## Validate and publish
+
+```bash
+npm run fmt:check
+npm run typecheck
+npm run test:unit
+npm run test:e2e
+npm run smoke
+npm run audit:security
+```
+
+GitHub Pages serves the committed `docs/` directory from `main`. Refresh the visual artifacts after a meaningful UI change:
+
+```bash
+npm run screenshot
+npm run demo
+```
 
 ## Self-hosted infrastructure
 
-| Repo                                              | Endpoint                               | Purpose                     |
-| ------------------------------------------------- | -------------------------------------- | --------------------------- |
-| https://github.com/baditaflorin/signaling-server  | `wss://turn.0docker.com/ws`            | y-webrtc signaling fan-out  |
-| https://github.com/baditaflorin/turn-token-server | `https://turn.0docker.com/credentials` | HMAC TURN creds, 1-hour TTL |
-| https://github.com/baditaflorin/coturn-hetzner    | `turn:turn.0docker.com:3479`           | TURN relay                  |
+| Service          | Endpoint                               | Purpose                     |
+| ---------------- | -------------------------------------- | --------------------------- |
+| Signaling        | `wss://turn.0docker.com/ws`            | WebRTC signaling fan-out    |
+| TURN credentials | `https://turn.0docker.com/credentials` | Ephemeral relay credentials |
+| TURN relay       | `turn:turn.0docker.com:3479`           | Relay fallback              |
 
-## Settings overrides
-
-The settings drawer lets the user override signaling and TURN endpoints. localStorage keys:
-
-- `__APP_NAME__:signalingUrl`
-- `__APP_NAME__:turnTokenUrl`
-- `__APP_NAME__:iceServers`
-- `__APP_NAME__:room`
-
-If endpoints are blank or unreachable, the app falls back to STUN-only.
-
-## Version + commit on every screen
-
-The bottom-right footer on every screen of the live app shows:
-
-- `source` → this repo
-- `tip ♥` → PayPal
-- `vX.Y.Z · <short-sha>` — version from `package.json` plus the build-time git commit
-
-## Build & deploy
-
-GitHub Pages serves the committed `docs/` directory on the `main` branch. There is no GitHub Actions build workflow; local Husky-style hooks gate formatting / typecheck / smoke build before each push.
-
-```bash
-npm run smoke                                    # build + sanity-check docs/
-bash ../mesh-common/scripts/screenshot-app.sh    # regenerate docs/screenshot.png
-```
+The Settings drawer lets a user override signaling and TURN endpoints locally. If an endpoint is unavailable, the app continues with the browser's direct mesh path when possible.
 
 ## Privacy
 
-<!-- mesh:privacy-section:start -->
+Everything posted to a room is visible to the people in that room. A local working name, cryptographic identity, and browser settings remain on the device except where the app intentionally shares the name with the room to make coordination legible.
 
-Everything you publish to a room is visible to every peer in that room. Your local device's name, key, and choices stay local. Cryptographic signatures prove **who** wrote each entry; they do **not** prevent peers from reading or copying entries. The room URL is the access control — share it deliberately.
-
-See `docs/privacy.md` for the full threat model — capabilities used, what other peers in the mesh see, what the self-hosted infra sees, what stays local.
-<!-- mesh:privacy-section:end -->
+Read the full [privacy model](docs/privacy.md) before using the desk for sensitive work.
 
 ## License
 
-MIT — see `LICENSE`.
+MIT — see [LICENSE](LICENSE).

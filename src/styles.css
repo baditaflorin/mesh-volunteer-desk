@@ -1,5 +1,5 @@
-/* App-local styles. Mesh chrome (settings drawer, self-ref bar) is provided by
- * @baditaflorin/mesh-common/styles.css imported in main.tsx. */
+/* App-local visual system. MeshShell supplies the field palette and shared
+ * primitives; this layer turns it into a calm, operational volunteer desk. */
 
 :root {
   color-scheme: dark;
@@ -12,40 +12,696 @@
 html,
 body,
 #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
   width: 100%;
-  background: var(--mesh-bg);
-  color: var(--mesh-fg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  min-width: 0;
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: var(--mesh-canvas, #15170e);
+  color: var(--mesh-text, #f6f1dc);
+  font-family: var(--mesh-font-sans, ui-sans-serif, system-ui, sans-serif);
   -webkit-tap-highlight-color: transparent;
 }
 
-.feature-placeholder {
-  padding: 6rem 1.5rem 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
+button,
+input {
+  font: inherit;
 }
 
-.feature-placeholder h1 {
-  font-size: 1.6rem;
-  margin: 0;
+.volunteer-desk {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  overflow-x: clip;
+  overflow-y: auto;
+  padding: clamp(0.9rem, 2vw, 1.6rem);
+  background:
+    radial-gradient(circle at 88% 7%, rgb(217 179 84 / 14%), transparent 29rem),
+    radial-gradient(circle at 12% 91%, rgb(104 151 98 / 10%), transparent 27rem),
+    var(--mesh-canvas, #15170e);
+  overscroll-behavior: contain;
+}
+
+.volunteer-desk::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgb(246 241 220 / 2%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(246 241 220 / 2%) 1px, transparent 1px);
+  background-size: 2.8rem 2.8rem;
+  content: "";
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+}
+
+.volunteer-desk > * {
+  position: relative;
+  z-index: 1;
+}
+
+.volunteer-desk-entry {
+  display: grid;
+  min-height: 0;
+  place-items: stretch center;
+}
+
+.volunteer-launch {
+  width: min(100%, 73rem);
+  min-height: 100%;
+  padding: clamp(1.25rem, 3.7vw, 3rem);
+  border: 1px solid color-mix(in srgb, var(--mesh-border) 84%, var(--mesh-accent));
+  background:
+    linear-gradient(145deg, rgb(41 44 29 / 96%), rgb(21 23 14 / 96%)), var(--mesh-surface-raised);
+  box-shadow:
+    0 1.5rem 4.5rem rgb(0 0 0 / 28%),
+    inset 0 1px 0 rgb(255 255 255 / 4%);
+}
+
+.volunteer-launch .mesh-launch-content {
+  width: min(100%, 66rem);
+  gap: clamp(0.75rem, 1.8vw, 1.2rem);
+}
+
+.volunteer-launch .mesh-launch-eyebrow,
+.desk-kicker,
+.desk-command-label,
+.desk-crew-label,
+.assignment-composer-label {
   color: var(--mesh-accent);
+  font-size: 0.69rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
-.feature-placeholder p {
-  max-width: 32rem;
+.volunteer-launch .mesh-launch h1 {
+  max-width: 12ch;
+  font-size: clamp(2.35rem, 5.8vw, 4.45rem);
+  letter-spacing: -0.065em;
+}
+
+.volunteer-launch .mesh-launch-promise {
+  max-width: 34rem;
+  color: color-mix(in srgb, var(--mesh-text-muted) 88%, white);
+}
+
+.desk-launch-presence,
+.desk-heading-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.volunteer-launch .mesh-launch-presence {
+  width: 100%;
+}
+
+.volunteer-launch .mesh-launch-connection {
+  color: var(--mesh-text-muted);
+}
+
+.desk-entry-panel {
+  display: grid;
+  gap: 0.85rem;
+  border-color: color-mix(in srgb, var(--mesh-border) 72%, var(--mesh-accent));
+  background:
+    linear-gradient(150deg, rgb(255 255 255 / 3%), transparent 48%), var(--mesh-surface-raised);
+}
+
+.desk-entry-panel-header,
+.desk-panel-heading,
+.desk-board-command {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.desk-entry-panel-header h2,
+.desk-panel-heading h2 {
+  margin: 0.2rem 0 0;
+  color: var(--mesh-text);
+  font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+  letter-spacing: -0.035em;
+  line-height: 1.06;
+}
+
+.desk-entry-panel .mesh-name-input-field,
+.assignment-composer-input {
+  min-height: 2.65rem;
+  border: 1px solid var(--mesh-border);
+  border-radius: var(--mesh-radius-md);
+  background: rgb(5 7 4 / 20%);
+  color: var(--mesh-text);
+}
+
+.desk-entry-panel .mesh-name-input-field::placeholder,
+.assignment-composer-input::placeholder {
+  color: color-mix(in srgb, var(--mesh-text-muted) 76%, transparent);
+}
+
+.desk-flow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.45rem 0.65rem;
   margin: 0;
-  opacity: 0.85;
-  line-height: 1.5;
+  padding: 0.75rem 0;
+  border-block: 1px solid color-mix(in srgb, var(--mesh-border) 74%, transparent);
 }
 
-.feature-status {
-  font-size: 0.85rem;
-  opacity: 0.6;
+.desk-flow-step {
+  display: grid;
+  width: 1.45rem;
+  height: 1.45rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--mesh-accent) 70%, var(--mesh-border));
+  border-radius: 50%;
+  color: var(--mesh-accent);
+  font-size: 0.72rem;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
+}
+
+.desk-flow p {
+  display: grid;
+  gap: 0.08rem;
+  margin: 0;
+  color: var(--mesh-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.desk-flow strong {
+  color: var(--mesh-text);
+  font-size: 0.86rem;
+}
+
+.assignment-composer {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.assignment-composer-controls {
+  display: flex;
+  min-width: 0;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.assignment-composer-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.62rem 0.78rem;
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.assignment-composer-input:focus-visible {
+  border-color: var(--mesh-accent);
+  box-shadow: 0 0 0 3px rgb(217 179 84 / 18%);
+}
+
+.assignment-composer-compact .mesh-button {
+  white-space: nowrap;
+}
+
+.volunteer-launch .mesh-launch-action-primary {
+  min-width: min(100%, 13.5rem);
+  box-shadow: 0 0.8rem 2.1rem rgb(217 179 84 / 18%);
+}
+
+.volunteer-desk-active {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: clamp(0.85rem, 1.8vw, 1.35rem);
+}
+
+.desk-heading {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.8rem 1.5rem;
+}
+
+.desk-heading h1 {
+  margin: 0.2rem 0 0;
+  color: var(--mesh-text);
+  font-size: clamp(1.7rem, 3.7vw, 2.65rem);
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.desk-heading-copy {
+  max-width: 43rem;
+  margin: 0.5rem 0 0;
+  color: var(--mesh-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.desk-heading-status {
+  justify-content: flex-end;
+  padding-bottom: 0.08rem;
+}
+
+.desk-workspace {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  grid-template-columns: minmax(17rem, 0.78fr) minmax(0, 1.42fr);
+  gap: clamp(0.8rem, 1.8vw, 1.35rem);
+}
+
+.desk-seat-panel,
+.desk-board-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: clamp(0.8rem, 1.6vw, 1.15rem);
+  overflow: hidden;
+}
+
+.desk-seat-panel {
+  background: linear-gradient(160deg, rgb(217 179 84 / 10%), transparent 44%), var(--mesh-surface);
+}
+
+.desk-board-panel {
+  box-shadow:
+    0 1rem 2.6rem rgb(0 0 0 / 17%),
+    inset 0 1px 0 rgb(255 255 255 / 3%);
+}
+
+.desk-panel-heading > div,
+.desk-board-command > div {
+  min-width: 0;
+}
+
+.desk-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin: 0;
+}
+
+.desk-facts div {
+  display: grid;
+  gap: 0.16rem;
+  padding: 0.62rem 0.68rem;
+  border: 1px solid color-mix(in srgb, var(--mesh-border) 80%, transparent);
+  border-radius: var(--mesh-radius-sm);
+  background: rgb(0 0 0 / 9%);
+}
+
+.desk-facts dt {
+  color: var(--mesh-text-muted);
+  font-size: 0.7rem;
+}
+
+.desk-facts dd {
+  margin: 0;
+  color: var(--mesh-text);
+  font-size: 0.88rem;
+  font-weight: 740;
+}
+
+.desk-seat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.desk-crew {
+  display: grid;
+  gap: 0.45rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid color-mix(in srgb, var(--mesh-border) 78%, transparent);
+}
+
+.desk-crew-label {
+  margin: 0;
+  color: var(--mesh-text-muted);
+}
+
+.desk-crew ul {
+  display: grid;
+  gap: 0.38rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.desk-crew li {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.48rem;
+  color: var(--mesh-text);
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+}
+
+.desk-crew-marker {
+  width: 0.45rem;
+  height: 0.45rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--mesh-success);
+  box-shadow: 0 0 0 3px rgb(146 215 161 / 11%);
+}
+
+.desk-board-heading {
+  align-items: center;
+}
+
+.desk-board-command {
+  align-items: center;
+  padding: 0.82rem;
+  border: 1px solid color-mix(in srgb, var(--mesh-border) 72%, var(--mesh-accent));
+  border-radius: var(--mesh-radius-md);
+  background: linear-gradient(115deg, rgb(217 179 84 / 10%), transparent 58%), rgb(0 0 0 / 8%);
+}
+
+.desk-command-label,
+.desk-command-copy {
+  margin: 0;
+}
+
+.desk-command-copy {
+  max-width: 35rem;
+  margin-top: 0.2rem;
+  color: var(--mesh-text-muted);
+  font-size: 0.86rem;
+  line-height: 1.38;
+}
+
+.desk-board-command .mesh-button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.assignment-list {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.assignment-card {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.72rem;
+  padding: 0.72rem;
+  border: 1px solid color-mix(in srgb, var(--mesh-border) 82%, transparent);
+  border-radius: var(--mesh-radius-md);
+  background: rgb(0 0 0 / 9%);
+}
+
+.assignment-card-mine {
+  border-color: color-mix(in srgb, var(--mesh-accent) 60%, var(--mesh-border));
+  background: linear-gradient(100deg, rgb(217 179 84 / 12%), rgb(0 0 0 / 8%));
+}
+
+.assignment-card-index {
+  color: var(--mesh-text-muted);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.assignment-card-body h3,
+.assignment-card-body p {
+  margin: 0;
+}
+
+.assignment-card-body h3 {
+  color: var(--mesh-text);
+  font-size: 0.94rem;
+  letter-spacing: -0.012em;
+  line-height: 1.28;
+  overflow-wrap: anywhere;
+}
+
+.assignment-card-body p {
+  margin-top: 0.18rem;
+  color: var(--mesh-text-muted);
+  font-size: 0.74rem;
+}
+
+.assignment-card-state {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.45rem;
+}
+
+.assignment-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+.assignment-empty {
+  display: grid;
+  gap: 0.2rem;
+  padding: 1rem;
+  border: 1px dashed color-mix(in srgb, var(--mesh-border) 85%, transparent);
+  border-radius: var(--mesh-radius-md);
+  color: var(--mesh-text-muted);
+  text-align: center;
+}
+
+.assignment-empty p {
+  margin: 0;
+  color: var(--mesh-text);
+  font-weight: 720;
+}
+
+.assignment-empty span {
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+@media (min-width: 47.5rem) {
+  .volunteer-launch .mesh-launch-content {
+    grid-template-areas:
+      "header preview"
+      "presence preview"
+      "actions preview"
+      "connection preview";
+    grid-template-columns: minmax(0, 0.92fr) minmax(19rem, 1.08fr);
+    align-items: center;
+    column-gap: clamp(1.2rem, 4vw, 3.4rem);
+    row-gap: 0.8rem;
+  }
+
+  .volunteer-launch .mesh-launch-header {
+    grid-area: header;
+  }
+
+  .volunteer-launch .mesh-launch-presence {
+    grid-area: presence;
+  }
+
+  .volunteer-launch .mesh-launch-preview {
+    grid-area: preview;
+    align-self: stretch;
+  }
+
+  .volunteer-launch .mesh-launch-actions {
+    grid-area: actions;
+    align-self: start;
+  }
+
+  .volunteer-launch .mesh-launch-connection {
+    grid-area: connection;
+  }
+
+  .desk-entry-panel {
+    height: 100%;
+  }
+}
+
+@media (max-width: 47.4375rem) {
+  .volunteer-desk {
+    padding: 0;
+  }
+
+  .volunteer-launch {
+    width: 100%;
+    min-height: 100%;
+    padding: 0.9rem 1rem 1.1rem;
+    border-inline: 0;
+    border-radius: 0;
+  }
+
+  .volunteer-launch .mesh-launch-content {
+    gap: 0.72rem;
+  }
+
+  .volunteer-launch .mesh-launch h1 {
+    font-size: clamp(2.05rem, 10vw, 2.7rem);
+  }
+
+  .volunteer-launch .mesh-launch-promise {
+    font-size: 0.91rem;
+    line-height: 1.4;
+  }
+
+  .volunteer-launch .mesh-launch-connection {
+    font-size: 0.75rem;
+  }
+
+  .desk-entry-panel {
+    gap: 0.65rem;
+    padding: 0.78rem;
+  }
+
+  .desk-entry-panel .mesh-name-input-hint {
+    display: none;
+  }
+
+  .desk-flow {
+    gap: 0.35rem 0.55rem;
+    padding: 0.55rem 0;
+  }
+
+  .desk-flow p {
+    font-size: 0.74rem;
+  }
+
+  .desk-flow strong {
+    font-size: 0.78rem;
+  }
+
+  .volunteer-desk-active {
+    padding: 1rem;
+  }
+
+  .desk-heading {
+    align-items: flex-start;
+  }
+
+  .desk-heading-status {
+    justify-content: flex-start;
+  }
+
+  .desk-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .desk-seat-panel,
+  .desk-board-panel {
+    overflow: visible;
+  }
+
+  .desk-board-command .mesh-button {
+    width: 100%;
+  }
+
+  .assignment-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .assignment-card-state {
+    grid-column: 2;
+    align-items: flex-start;
+  }
+
+  .assignment-card-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 30rem) {
+  .assignment-composer-controls {
+    flex-wrap: wrap;
+  }
+
+  .assignment-composer-controls .mesh-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 47.4375rem) and (max-height: 54rem) {
+  .volunteer-launch {
+    padding-top: 0.7rem;
+  }
+
+  .volunteer-launch .mesh-launch-eyebrow {
+    font-size: 0.64rem;
+  }
+
+  .volunteer-launch .mesh-launch h1 {
+    font-size: clamp(1.85rem, 9vw, 2.35rem);
+  }
+
+  .desk-flow p span {
+    display: none;
+  }
+}
+
+@media (min-width: 47.5rem) and (max-height: 44rem) {
+  .volunteer-desk {
+    padding: 0.75rem;
+  }
+
+  .volunteer-launch {
+    min-height: 100%;
+    padding: 1.05rem clamp(1.25rem, 3vw, 2.2rem);
+  }
+
+  .volunteer-launch .mesh-launch-content {
+    gap: 0.55rem;
+    row-gap: 0.55rem;
+  }
+
+  .volunteer-launch .mesh-launch h1 {
+    font-size: clamp(2.15rem, 4.7vw, 3.35rem);
+  }
+
+  .volunteer-launch .mesh-launch-promise {
+    font-size: 0.89rem;
+    line-height: 1.34;
+  }
+
+  .desk-entry-panel {
+    gap: 0.58rem;
+    padding: 0.82rem;
+  }
+
+  .desk-entry-panel .mesh-name-input-hint,
+  .desk-flow p span {
+    display: none;
+  }
+
+  .desk-flow {
+    padding: 0.48rem 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assignment-composer-input {
+    transition: none;
+  }
 }
