@@ -2,6 +2,7 @@ import { createMeshConfig } from "@baditaflorin/mesh-common";
 
 export const config = createMeshConfig({
   appName: "mesh-volunteer-desk",
+  breadcrumbs: false,
   displayName: "Volunteer Desk",
   visualProfile: "field",
   shellLayout: "inset",
